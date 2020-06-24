@@ -42,7 +42,7 @@ Follow [Consul install guide](https://learn.hashicorp.com/consul/datacenter-depl
 ### Quick... and not so dirty
 * Create 1 VM for consul agent "client". 1 vCPU, 4GB RAM, 20GB Disk, CentOS 7.5, 1 NIC
 * Create 2 VMs for consul agent "server". 1 vCPU, 4GB RAM, 20GB Disk, CentOS 7.5, 1 NIC
-* Private IP of each VM is noted `<VM_ip>` in this guideT
+* Private IP of each VM is noted `<VM_ip>` in this guide
 * Choose a "server" VM as Master. The private IP of Master VM is noted `<VM_master_ip>` in this guide
 * Copy or `git clone` .sh script in `consul_install` directory
 * On all VMs, execute:
