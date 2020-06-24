@@ -1,0 +1,50 @@
+---
+- name: GET Consul - backup value
+  set_fact:
+    new_urls: "{{ lookup('consul_kv', '{{ extra_consul_path_backup }}/{{ extra_category }}', scheme=extra_consul_agent_scheme, validate_certs='no', host=extra_consul_agent_ip, port=extra_consul_agent_port, datacenter=extra_consul_datacenter ) }}"
+
+- name: SHOW backup value
+  debug:
+    var: new_urls
+
+- name: GET BIG-IP - Token
+  uri:
+    url: "https://{{ extra_ip_mgt }}:{{ extra_port_mgt }}/mgmt/shared/authn/login"
+    method: POST
+    headers:
+      Content-Type: application/json
+    body: "{{ lookup('template','bigip_auth.jinja2') }}"
+    body_format: json
+    timeout: 60
+    status_code: 200, 202
+    validate_certs: false
+  register: auth
+
+- name: SET BIG-IP - SSLO category
+  uri:
+    url: "https://{{ extra_ip_mgt }}:{{ extra_port_mgt }}/mgmt/tm/sys/url-db/url-category/~Common~{{ extra_category }}"
+    method: PATCH
+    headers:
+      Content-Type: application/json
+      X-F5-Auth-Token: "{{auth.json.token.token}}"
+    body: "{{ new_urls }}"
+    body_format: json
+    timeout: 60
+    status_code: 200, 202
+    validate_certs: false
+
+- name: SET Consul - Source of Truth - SSLO category
+  consul_kv:
+    scheme: "{{extra_consul_agent_scheme}}"
+    validate_certs: no
+    host: "{{extra_consul_agent_ip}}"
+    port: "{{extra_consul_agent_port}}"
+    key: "{{ extra_consul_path_source_of_truth }}/{{ extra_category }}"
+    value: "{{ new_urls }}"
+
+- name: GET Consul - Source of Truth value
+  debug:
+    msg: "{{ lookup('consul_kv', '{{ extra_consul_path_source_of_truth }}/{{ extra_category }}', scheme=extra_consul_agent_scheme, validate_certs='no', host=extra_consul_agent_ip, port=extra_consul_agent_port, datacenter=extra_consul_datacenter ) }}"
+
+
+...

@@ -1,0 +1,9 @@
+---
+- hosts: all
+  connection: local
+  gather_facts: no
+
+  roles:
+    - { role: f5devcentral.f5ansible }
+    - role: poc-f5
+
