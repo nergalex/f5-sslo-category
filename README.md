@@ -127,4 +127,3 @@ Create and launch a job template that include each of those playbooks:
 | `extra_consul_agent_ip`   | Consul agent "client" IP to use | `10.0.0.20` |
 | `extra_consul_agent_port`   | Consul agent "client" port to use | `8500` |
 | `extra_consul_datacenter`   | Consul DC to store key/value | `8500` |
-
