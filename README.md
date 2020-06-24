@@ -94,6 +94,7 @@ Create and launch a job template that include each of those playbooks:
 
 | Extra variable| Description | Example of value      |
 | ------------- | ------------- | ------------- |
+| `activity`               | Refer to Job template above definition | `url_category-add_url` |
 | `extra_admin_user`               | BIG IP admin username | `admin` |
 | `extra_admin_password`  | BIG-IP admin password | `Ch4ngeMe!` |
 | `extra_ip_mgt`  | BIG-IP management IP | `10.228.234.11` |
