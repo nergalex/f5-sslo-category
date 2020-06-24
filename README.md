@@ -1,13 +1,19 @@
 # Use Case
-F5 BIG-IP SSL Orchestrator can use a Security Policy based on Custom Categories.
-To give more reliability and speed to recurrent Service Request, changes on a Custom Category can be automated.
-After a change applied and in case of Regression Tests in error, a rollback can be made quickly.
+[F5 BIG-IP SSL Orchestrator](https://www.f5.com/products/security/ssl-orchestrator) can use a [Security Policy](https://techdocs.f5.com/en-us/bigip-15-1-0/big-ip-access-policy-manager-visual-policy-editor/per-request-policy-item-reference/about-per-request-classification-items/about-category-lookup.html) based on [Custom URL Categories](https://techdocs.f5.com/en-us/bigip-15-1-0/big-ip-access-policy-manager-implementations/custom-url-categorization.html).
+Current URL lists of Custom URL Categories are stored in a Highly Available "Source of Truth" system.
+This "Source of Truth" can be used by a Ticketing system or a Cloud Management Platform to retrieve current URL list of a custom URL category, displayed to end-users before requesting a change.
+To be more reliable and faster in your Service Request deployment, changes on a Custom URL Category can be automated.
+If a business impact occurs after a deployment, an automated rollback action can be raised to deploy the previous URL list of a Custom URL Category.
 
 # How does it work?
-A custom category can be updated using API calls on F5 BIG-IP system, so with Ansible.
+* A custom URL category is updated by API calls on a F5 BIG-IP device with [Ansible](https://docs.ansible.com/ansible/latest/modules/uri_module.html).
+* Before apply a change on a BIG-IP device, current custom URL category value (URLs list) is saved in a remote system [Consul](https://www.consul.io/api/kv.html) as a backup configuration.
+* After apply a change on a BIG-IP device, current custom URL category value is saved in Consul system as a "Source of Truth".
+* Current URL list value of a custom URL category can be requested through Consul by any source, if an ACL allows it.
+* A rollback for a custom URL category is done using the backup custom URL category value stored in Consul.
 
 # Quick install
-## Ansible
+## Ansible (Tower)
 Create a virtualenv, follow [Tower admin guide](https://docs.ansible.com/ansible-tower/latest/html/administration/tipsandtricks.html#preparing-a-new-custom-virtualenv)
 Install ansible >= 2.9
 ```bash
@@ -23,15 +29,15 @@ $ chmod 755 -R /var/lib/awx/venv/my_env
 ```
 
 ## Consul
-Consul is the external "Source of Truth" tool.
+Consul is used as a "Source of Truth" system.
 Choose your install guide: customized or quick :o)
 ### Customized
-Install Consul, follow [Consul install guide](https://learn.hashicorp.com/consul/datacenter-deploy/deployment-guide#install-consul)
+Follow [Consul install guide](https://learn.hashicorp.com/consul/datacenter-deploy/deployment-guide#install-consul)
 
 ### Quick
 * Create 1 VM for consul agent "client". 1 vCPU, 4GB RAM, 20GB Disk, CentOS 7.5, 1 NIC
 * Create 2 VMs for consul agent "server". 1 vCPU, 4GB RAM, 20GB Disk, CentOS 7.5, 1 NIC
-* he private IP of each VM is noted `<VM_ip>` in this guideT
+* Private IP of each VM is noted `<VM_ip>` in this guideT
 * Choose a "server" VM as Master. The private IP of Master VM is noted `<VM_master_ip>` in this guide
 * Copy or `git clone` .sh script in `consul_install` directory
 * On all VMs, execute:
