@@ -19,8 +19,8 @@ This configuration has been done for a POC, do not use it as-is in a Production 
 
 # Quick install
 ## Ansible (Tower)
-Create a virtualenv, follow [Tower admin guide](https://docs.ansible.com/ansible-tower/latest/html/administration/tipsandtricks.html#preparing-a-new-custom-virtualenv)
-Install ansible >= 2.9
+Create a virtualenv, follow [Tower admin guide](https://docs.ansible.com/ansible-tower/latest/html/administration/tipsandtricks.html#preparing-a-new-custom-virtualenv).
+Install ansible version >= 2.9
 ```bash
 $ sudo yum groupinstall -y "development tools"
 $ sudo virtualenv /var/lib/awx/venv/my_env
