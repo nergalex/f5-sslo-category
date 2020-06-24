@@ -1,9 +1,9 @@
 # Use Case
-[F5 BIG-IP SSL Orchestrator](https://www.f5.com/products/security/ssl-orchestrator) can use a [Security Policy](https://techdocs.f5.com/en-us/bigip-15-1-0/big-ip-access-policy-manager-visual-policy-editor/per-request-policy-item-reference/about-per-request-classification-items/about-category-lookup.html) based on [Custom URL Categories](https://techdocs.f5.com/en-us/bigip-15-1-0/big-ip-access-policy-manager-implementations/custom-url-categorization.html).
-Current URL lists of Custom URL Categories are stored in a Highly Available "Source of Truth" system.
-This "Source of Truth" can be used by a Ticketing system or a Cloud Management Platform to retrieve current URL list of a custom URL category, displayed to end-users before requesting a change.
-To be more reliable and faster in your Service Request deployment, changes on a Custom URL Category can be automated.
-If a business impact occurs after a deployment, an automated rollback action can be raised to deploy the previous URL list of a Custom URL Category.
+* [F5 BIG-IP SSL Orchestrator](https://www.f5.com/products/security/ssl-orchestrator) can use a [Security Policy](https://techdocs.f5.com/en-us/bigip-15-1-0/big-ip-access-policy-manager-visual-policy-editor/per-request-policy-item-reference/about-per-request-classification-items/about-category-lookup.html) based on [Custom URL Categories](https://techdocs.f5.com/en-us/bigip-15-1-0/big-ip-access-policy-manager-implementations/custom-url-categorization.html).
+* Current URL lists of Custom URL Categories are stored in a Highly Available "Source of Truth" system.
+* This "Source of Truth" can be used by a Ticketing system or a Cloud Management Platform to retrieve current URL list of a custom URL category, displayed to end-users before requesting a change.
+* To be more reliable and faster in your Service Request deployment, changes on a Custom URL Category can be automated.
+* If a business impact occurs after a deployment, an automated rollback action can be raised to deploy the previous URL list of a Custom URL Category.
 
 # How does it work?
 * A custom URL category is updated by API calls on a F5 BIG-IP device with [Ansible](https://docs.ansible.com/ansible/latest/modules/uri_module.html).
