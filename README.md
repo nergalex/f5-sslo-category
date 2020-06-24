@@ -1,3 +1,11 @@
+# Use Case
+F5 BIG-IP SSL Orchestrator can use a Security Policy based on Custom Categories.
+To give more reliability and speed to recurrent Service Request, changes on a Custom Category can be automated.
+After a change applied and in case of Regression Tests in error, a rollback can be made quickly.
+
+# How does it work?
+A custom category can be updated using API calls on F5 BIG-IP system, so with Ansible.
+
 # Quick install
 ## Ansible
 Create a virtualenv, follow [Tower admin guide](https://docs.ansible.com/ansible-tower/latest/html/administration/tipsandtricks.html#preparing-a-new-custom-virtualenv)
