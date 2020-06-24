@@ -35,11 +35,11 @@ $ chmod 755 -R /var/lib/awx/venv/my_env
 
 ## Consul
 Consul is used as a "Source of Truth" system.
-Choose your install guide: customized or quick :o)
+Choose your install guide: customized or quickly :o)
 ### Customized
 Follow [Consul install guide](https://learn.hashicorp.com/consul/datacenter-deploy/deployment-guide#install-consul)
 
-### Quick
+### Quick... and not so dirty
 * Create 1 VM for consul agent "client". 1 vCPU, 4GB RAM, 20GB Disk, CentOS 7.5, 1 NIC
 * Create 2 VMs for consul agent "server". 1 vCPU, 4GB RAM, 20GB Disk, CentOS 7.5, 1 NIC
 * Private IP of each VM is noted `<VM_ip>` in this guideT
