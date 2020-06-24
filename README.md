@@ -13,7 +13,7 @@
 * A rollback for a custom URL category is done using the backup custom URL category value stored in Consul.
 
 # Proof of Concept
-This configuration has be done for a POC, do not use it as-is in a Production environment. Use of custom URL category have performance impacts, technical recommendation bellow must be taken in consideration. 
+This configuration has been done for a POC, do not use it as-is in a Production environment. Use of custom URL category have performance impacts, technical recommendation bellow must be taken in consideration. 
 * `glob-match` URL type: Custom categories consume CPU just by existing, categories with `glob-match` patterns doubly so. Try to avoid `glob-match` categories if you can.
 * max URLs: if a custom URL category start to exceed 200 URLs, consider switching to a `data group` design
 
