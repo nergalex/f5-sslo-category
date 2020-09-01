@@ -1,0 +1,5 @@
+---
+# default variables
+activity:
+infra_admin_username: 'cyber'
+

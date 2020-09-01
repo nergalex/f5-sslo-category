@@ -1,0 +1,98 @@
+---
+- name: CREATE Consul - remove service_account
+  consul_kv:
+    scheme: "{{extra_consul_agent_scheme}}"
+    validate_certs: no
+    host: "{{extra_consul_agent_ip}}"
+    port: "{{extra_consul_agent_port}}"
+    key: "{{ extra_consul_path_source_of_truth }}/service_accounts/{{ extra_subscription_name | lower }}"
+    state: absent
+
+- name: GET Consul - service_accounts
+  consul_kv:
+    scheme: "{{extra_consul_agent_scheme}}"
+    validate_certs: no
+    host: "{{extra_consul_agent_ip}}"
+    port: "{{extra_consul_agent_port}}"
+    recurse: yes
+    key: "{{ extra_consul_path_source_of_truth }}/service_accounts"
+  register: retrieved_service_accounts
+
+- name: INIT var_service_accounts
+  set_fact:
+    var_service_accounts: []
+  when: retrieved_service_accounts.data == None
+
+- name: INIT var_subscription_names
+  set_fact:
+    var_service_accounts: "{{ retrieved_service_accounts.data }}"
+  when: retrieved_service_accounts.data != None
+
+- name: INIT var_subscriptions
+  set_fact:
+    var_subscriptions: []
+
+- name: SET var_subscriptions
+  set_fact:
+    var_subscriptions: "{{ var_subscriptions + [ {
+      'name': item.Key.split(extra_consul_path_source_of_truth).1.split('/').2,
+      'service_account': item.Value
+      } ] }}"
+  loop: "{{ var_service_accounts }}"
+
+- name: GET BIG-IP - Token
+  uri:
+    url: "https://{{ extra_ip_mgt }}:{{ extra_port_mgt }}/mgmt/shared/authn/login"
+    method: POST
+    headers:
+      Content-Type: application/json
+    body: "{{ lookup('template','bigip_auth.jinja2') }}"
+    body_format: json
+    timeout: 60
+    status_code: 200, 202
+    validate_certs: false
+  register: auth
+
+- name: INIT var_new_urls
+  set_fact:
+    var_new_urls: []
+
+- name: GET BIG-IP - SSLO PRP box
+  uri:
+    url: "https://{{ extra_ip_mgt }}:{{ extra_port_mgt }}/mgmt/tm/apm/policy/policy-item/~Common~{{ extra_sslo_prp_box_name }}"
+    method: GET
+    headers:
+      X-F5-Auth-Token: "{{auth.json.token.token}}"
+    timeout: 60
+    status_code: 200, 202
+    validate_certs: false
+  register: var_box_current
+
+- name: DELETE BIG-IP - SSLO datagroup
+  uri:
+    url: "https://{{ extra_ip_mgt }}:{{ extra_port_mgt }}/mgmt/tm/ltm/data-group/internal/dg_sslo_cat_{{ extra_subscription_name | lower }}"
+    method: DELETE
+    headers:
+      X-F5-Auth-Token: "{{auth.json.token.token}}"
+    timeout: 60
+    status_code: 200, 202
+    validate_certs: false
+
+- debug:
+    var: var_box_current.json
+
+- name: UPDATE BIG-IP - SSLO PRP
+  uri:
+    url: "https://{{ extra_ip_mgt }}:{{ extra_port_mgt }}/mgmt/tm/apm/policy/policy-item/~Common~{{ extra_sslo_prp_box_name }}"
+    method: PATCH
+    headers:
+      Content-Type: application/json
+      X-F5-Auth-Token: "{{auth.json.token.token}}"
+    body: "{{ lookup('template', 'sslo_prp_box.json') }}"
+    body_format: json
+    timeout: 60
+    status_code: 200, 202
+    validate_certs: false
+
+
+...

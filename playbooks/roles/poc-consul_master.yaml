@@ -1,0 +1,28 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+  - name: CREATE ansible-playbook in-memory inventory
+    add_host:
+      groups: "consul-cluster"
+      hostname: "{{ item.key }}"
+      ansible_host: "{{ item.value.ip_mgt }}"
+      ansible_port: 22
+    loop: "{{ lookup('dict', extra_consul_cluster.members) }}"
+    when: item.value.master is defined and item.value.master
+    # https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#intro-inventory
+    # https://docs.microsoft.com/en-us/azure/developer/ansible/vm-scale-set-deploy-app
+
+- hosts: consul-cluster
+  gather_facts: no
+  become: true
+  roles:
+    - role: poc-consul
+
+
+
+
+
+
+
+

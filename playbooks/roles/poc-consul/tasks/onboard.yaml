@@ -1,0 +1,60 @@
+---
+- name: SET var_vm_master_ip_mgt
+  set_fact:
+    var_vm_master_ip_mgt: "{{ item.value.ip_mgt }}"
+  loop: "{{ lookup('dict', extra_consul_cluster.members) }}"
+  when: item.value.master is defined and item.value.master
+
+- debug:
+    var: var_vm_master_ip_mgt
+
+- name: INIT var_nb_server
+  set_fact:
+    var_nb_server: 0
+
+- name: SET var_nb_server
+  set_fact:
+    var_nb_server: "{{ var_nb_server | int + 1 }}"
+  loop: "{{ lookup('dict', extra_consul_cluster.members) }}"
+  when: item.value.role == "server"
+
+- debug:
+    var: var_nb_server
+
+# https://learn.hashicorp.com/tutorials/consul/deployment-guide#configure-consul-agents
+- name: CREATE directory for hosting configuration file
+  file:
+    path: /etc/consul.d
+    state: directory
+    mode: '0755'
+    owner: consul
+    group: consul
+
+- name: COPY consul.hcl
+  copy:
+    content: "{{ lookup('template', 'consul_hcl.conf') }}"
+    dest: /etc/consul.d/consul.hcl
+    mode: '0640'
+    owner: consul
+    group: consul
+
+- name: COPY server.hcl
+  copy:
+    content: "{{ lookup('template', 'server_hcl.conf') }}"
+    dest: /etc/consul.d/server.hcl
+    mode: '0640'
+    owner: consul
+    group: consul
+  when: extra_consul_cluster.members[inventory_hostname].role == "server"
+
+- name: enable Consul service
+  systemd:
+    name: consul
+    enabled: yes
+    masked: no
+
+- name: start Consul service
+  systemd:
+    name: consul
+    state: started
+...

@@ -26,8 +26,12 @@ This configuration has been done for a POC, do not use it as-is in a Production 
 * `glob-match` URL type: Custom categories consume CPU just by existing, categories with `glob-match` patterns doubly so. Try to avoid `glob-match` categories if you can.
 * max URLs: if a custom URL category start to exceed 200 URLs, consider switching to a `data group` design
 
-# Quick install
-## Ansible (Tower)
+Install Guide
+======
+# SSL Orchestrator
+<TODO>
+
+# Ansible (Tower)
 Create a virtualenv, follow [Tower admin guide](https://docs.ansible.com/ansible-tower/latest/html/administration/tipsandtricks.html#preparing-a-new-custom-virtualenv).
 Install ansible version >= 2.9
 ```bash
@@ -42,76 +46,112 @@ Ensure that your virtualenv have the rights 755, else:
 $ chmod 755 -R /var/lib/awx/venv/my_env
 ```
 
-## Consul
-Consul is used as a "Source of Truth" system.
-Choose your install guide: customized or automated
-### Customized
-Follow [Consul install guide](https://learn.hashicorp.com/consul/datacenter-deploy/deployment-guide#install-consul)
+# Consul
+Choose your install guide: customized from [Consul install guide](https://learn.hashicorp.com/consul/datacenter-deploy/deployment-guide#install-consul) or automated (below) with Ansible
 
-### Quick... and not so dirty
-* Create 1 VM for consul agent "client". 1 vCPU, 4GB RAM, 20GB Disk, CentOS 7.5, 1 NIC
-* Create 2 VMs for consul agent "server". 1 vCPU, 4GB RAM, 20GB Disk, CentOS 7.5, 1 NIC
-* Private IP of each VM is noted `<VM_ip>` in this guide
-* Choose a "server" VM as Master. The private IP of Master VM is noted `<VM_master_ip>` in this guide
-* Copy or `git clone` .sh script in `consul_install` directory
-* On all VMs, execute:
-```bash
-$ bash ./install_consul.sh
-$ 	vi /etc/systemd/system/consul.service
-[Unit]
-Description="HashiCorp Consul - A service mesh solution"
-Documentation=https://www.consul.io/
-Requires=network-online.target
-After=network-online.target
-ConditionFileNotEmpty=/etc/consul.d/consul.hcl
+## Credential 
+Create custom credential `cred_Consul` to manage access to Consul VMs
 
-[Service]
-Type=notify
-User=consul
-Group=consul
-ExecStart=/usr/bin/consul agent -config-dir=/etc/consul.d/
-ExecReload=/usr/bin/consul reload
-ExecStop=/usr/bin/consul leave
-KillMode=process
-Restart=on-failure
-LimitNOFILE=65536
+| CREDENTIAL TYPE | USERNAME      | SSH PRIVATE KEY     | SIGNED SSH CERTIFICATE         | PRIVILEGE ESCALATION METHOD    |
+| ------------- | ------------- | ------------- | ------------- | ------------- |
+| `Machine` | `my_VM_admin_user` | `my_VM_admin_user_key` | `my_VM_admin_user_CRT` | `sudo` |
 
-[Install]
-WantedBy=multi-user.target
+## Workflow and Job Templates
+Create a worflow template `wf-create_create_cluster_consul` that includes each of those job template:
+
+| Job template  | playbook      | activity      | inventory     | limit         | credential   |
+| ------------- | ------------- | ------------- | ------------- | ------------- |------------- |
+| `poc-azure_create-vm-consul`  | `playbooks/poc-azure.yaml`        | `create-vm-consul`    | `localhost`   | none | `your_azure_account` |
+| `poc-consul_install`          | `playbooks/poc-consul.yaml`       | `install`             | `localhost`   | none | `cred_Consul` |
+| `poc-consul_keygen`           | `playbooks/poc-consul_master.yaml`| `keygen`              | `localhost`   | none | `cred_Consul` |
+| `poc-consul_onboard`          | `playbooks/poc-consul.yaml`       | `onboard`             | `localhost`   | none | `cred_Consul` |
+
+## Extra variables
+A dict contains Consul cluster configuration as desired
+```yaml
+extra_consul_cluster:
+  members:
+    <logical_name>:
+      az: <AZ list>
+      ip_mgt: <management IP>
+      master: [true | false]
+      role: [client | server]
+      vm_name: <VM_name>
+  version: <Consul version to download>
+  vm_master_ip_mgt: <management IP of the master Consul VM>
 ```
-* On all VMs, execute:
-```bash
-$ bash ./config_consul_agent.sh
+Example:
+```yaml
+extra_consul_cluster:
+  members:
+    server-1:
+      az:
+        - 1
+      ip_mgt: 10.100.0.60
+      master: true
+      role: server
+      vm_name: consul-server-1
+    server-2:
+      az:
+        - 2
+      ip_mgt: 10.100.0.61
+      master: false
+      role: server
+      vm_name: consul-server-2
+  version: 1.8.3
+  vm_master_ip_mgt: 10.100.0.60
 ```
-* Pick one generate key (example `XjnschM8RGlRA4dusLUpZARqcYk6XQ5QxhrGOa9FAw0=`), noted as `<consul_keygen_value>` in this guide.
-* On all VMs, execute:
-```bash
-$ vi /etc/consul.d/consul.hcl
-datacenter = "cloudbuilder"
-data_dir = "/opt/consul"
-encrypt = "<consul_keygen_value>"
-bind_addr = "<VM_ip>"
-client_addr = "<VM_ip>"
-```
-* On all VMs, except MASTER VM, add this line at the end of `/etc/consul.d/consul.hcl` file:
-```bash
-retry_join = ["<VM_master_ip>"]
-```
-* On "server" VMs, execute:
-```bash
-$ vi /etc/consul.d/consul.hcl
-server = true
-bootstrap_expect = 2
-ui = true
-```
-* Start Master VM and then all VMs:
-```bash
-sudo systemctl enable consul
-sudo systemctl start consul
-sudo systemctl status consul
-```
+Other variables:
+
+| Extra variable    | Description   | Example of value |
+| -------------     | ------------- | ------------- |
+| `extra_key_data`                          | admin CRT         | `-----BEGIN  CERTIFICATE-----XXXXXXX-----END CERTIFICATE-----` |
+| `extra_location`                          | region            | `eastus2` |
+| `extra_platform_name`                     | logical platform_name | `myPlatform` |
+| `extra_platform_tags`                     | logical platform_tags | `environment=DMO platform=Inbound project=CloudBuilderf5` |
+| `extra_subnet_mgt_on_premise`             | Tower subnet      | `10.0.0.0/24` |
+| `extra_vm_size`                           | VM type           | `Standard_DS1_v2` |
+| `infra_admin_username`                    | Admin username    | `plop` |
+| `extra_subnet_mgt_dataplane`              | Consul subnet     | `10.100.0.0/24` |
+
+# data-group playbooks
+## Job Templates
+Create and launch a job template that include each of those playbooks:
+
+| Job template  | playbook      | activity      | inventory     | limit         | credential   |
+| ------------- | ------------- | ------------- | ------------- | ------------- |------------- |
+| `poc-f5_sslo-subscription_create`             | `playbooks/poc-f5.yaml`       | `sslo-subscription_create`            | `localhost`  | `localhost` | none |
+| `poc-f5_sslo-data_group-add_url`              | `playbooks/poc-f5.yaml`       | `sslo-data_group-add_url`             | `localhost`  | `localhost` | none |
+| `poc-f5_sslo-data_group-remove_url`           | `playbooks/poc-f5.yaml`       | `sslo-data_group-remove_url`          | `localhost`  | `localhost` | none |
+| `poc-f5_sslo-subscription_delete`             | `playbooks/poc-f5.yaml`       | `sslo-subscription_delete`            | `localhost`  | `localhost` | none |
+
+## Survey
+A survey is the change form, i.e. an INPUT form for extra variables requested to end user.
+
+| Job template  | extra variable|
+| ------------- | ------------- |
+| `poc-f5_sslo-subscription_create`             | `extra_subscription_name`, `extra_service_account`     |
+| `poc-f5_sslo-data_group-add_url`              | `extra_subscription_name`, `extra_allow_urls`       |
+| `poc-f5_sslo-data_group-remove_url`           | `extra_subscription_name`, `extra_allow_urls`       |
+| `poc-f5_sslo-subscription_delete`             | `extra_subscription_name`       |
+
+## Extra variables
+
+| Extra variable| Description | Example of value      |
+| ------------- | ------------- | ------------- |
+| `activity`                        | Refer to Job template above definition | `url_category-add_url` |
+| `extra_admin_user`                | BIG IP admin username | `admin` |
+| `extra_admin_password`            | BIG-IP admin password | `Ch4ngeMe!` |
+| `extra_ip_mgt`                    | BIG-IP management IP | `10.228.234.11` |
+| `extra_port_mgt`                  | BIG-IP management IP | `443` |
+| `extra_consul_path_source_of_truth`   | Consul Source of Truth path | `poc_f5/outbound/sslo/subscriptions` |
+| `extra_consul_agent_scheme`       | Consul scheme access | `http` |
+| `extra_consul_agent_ip`           | Consul agent "client" IP to use | `10.100.0.60` |
+| `extra_consul_agent_port`         | Consul agent "client" port to use | `8500` |
+| `extra_consul_datacenter`         | Consul DC to store key/value | `pop` |
 
 # URL Category playbooks
+## Job Templates
 Create and launch a job template that include each of those playbooks:
 
 | Job template  | playbook      | activity      | inventory     | limit         | credential   |
@@ -119,6 +159,8 @@ Create and launch a job template that include each of those playbooks:
 | `poc-f5_url_category-add_url`             | `playbooks/poc-f5.yaml`       | `url_category-add_url`            | `localhost`  | `localhost` | none |
 | `poc-f5_url_category-remove_url`          | `playbooks/poc-f5.yaml`       | `url_category-remove_url`         | `localhost`  | `localhost` | none |
 | `poc-f5_url_category-rollback_category`   | `playbooks/poc-f5.yaml`       | `url_category-rollback_category`  | `localhost`   | `localhost` | none |
+
+## Extra variables
 
 | Extra variable| Description | Example of value      |
 | ------------- | ------------- | ------------- |

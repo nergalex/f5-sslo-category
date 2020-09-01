@@ -1,0 +1,11 @@
+---
+- name: Pre-requisite - Create a common infra
+  include_tasks: "create-common-infra.yaml"
+  when: activity == "create-hub-infra" or
+        activity == "create-spoke-infra"
+
+- name: Run specified activity
+  include_tasks: "{{ activity }}.yaml"
+  when: activity is defined
+
+...

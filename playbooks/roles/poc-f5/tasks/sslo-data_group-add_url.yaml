@@ -1,0 +1,55 @@
+---
+- name: FETCH current URLs from Consul
+  set_fact:
+    var_current_urls: "{{ lookup('consul_kv', '{{ extra_consul_path_source_of_truth }}/allow_urls/{{ extra_subscription_name | lower }}', scheme=extra_consul_agent_scheme, validate_certs='no', host=extra_consul_agent_ip, port=extra_consul_agent_port, datacenter=extra_consul_datacenter ) }}"
+
+- name: INIT new URLs
+  set_fact:
+    var_new_urls: "{{ var_current_urls }}"
+
+- name: SET new URLs
+  set_fact:
+    var_new_urls: "{{ var_new_urls + [ item ] }}"
+  loop: "{{ extra_allow_urls }}"
+  when: item not in var_current_urls
+
+- name: GET BIG-IP - Token
+  uri:
+    url: "https://{{ extra_ip_mgt }}:{{ extra_port_mgt }}/mgmt/shared/authn/login"
+    method: POST
+    headers:
+      Content-Type: application/json
+    body: "{{ lookup('template','bigip_auth.jinja2') }}"
+    body_format: json
+    timeout: 60
+    status_code: 200, 202
+    validate_certs: false
+  register: auth
+
+- name: SET BIG-IP - SSLO datagroup
+  uri:
+    url: "https://{{ extra_ip_mgt }}:{{ extra_port_mgt }}/mgmt/tm/ltm/data-group/internal/~Common~dg_sslo_cat_{{ extra_subscription_name | lower }}"
+    method: PUT
+    headers:
+      Content-Type: application/json
+      X-F5-Auth-Token: "{{auth.json.token.token}}"
+    body: "{{ lookup('template', 'datagroup.json') }}"
+    body_format: json
+    timeout: 60
+    status_code: 200, 202
+    validate_certs: false
+
+- name: SET Consul - Source of Truth - SSLO datagroup
+  consul_kv:
+    scheme: "{{extra_consul_agent_scheme}}"
+    validate_certs: no
+    host: "{{extra_consul_agent_ip}}"
+    port: "{{extra_consul_agent_port}}"
+    key: "{{ extra_consul_path_source_of_truth }}/allow_urls/{{ extra_subscription_name | lower }}"
+    value: "{{ var_new_urls }}"
+
+- name: GET Consul - Source of Truth value
+  debug:
+    msg: "{{ lookup('consul_kv', '{{ extra_consul_path_source_of_truth }}/allow_urls/{{ extra_subscription_name | lower }}', scheme=extra_consul_agent_scheme, validate_certs='no', host=extra_consul_agent_ip, port=extra_consul_agent_port, datacenter=extra_consul_datacenter ) }}"
+
+...

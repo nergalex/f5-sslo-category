@@ -1,0 +1,74 @@
+---
+- name: CREATE Network Security Group for Webhook access
+  delegate_to: localhost
+  azure_rm_securitygroup:
+    resource_group: "rg-{{ extra_platform_name }}"
+    name: "nsg-{{ extra_platform_name }}-consul"
+    location: "{{ extra_location }}"
+    tags: "{{ extra_platform_tags }} Name=nsg-{{ extra_platform_name }}-webhook owner={{ owner }}"
+    rules:
+      - name: in_allow_mgt_from_bt
+        direction: Inbound
+        priority: 100
+        source_address_prefix:
+          - '{{ extra_subnet_mgt_on_premise }}'
+        access: Allow
+      - name: in_allow_mgt_from_dataplane
+        direction: Inbound
+        priority: 101
+        source_address_prefix:
+          - '{{ extra_subnet_mgt_dataplane }}'
+        access: Allow
+      - name: out_allow_all
+        direction: Outbound
+        priority: 999
+        access: Allow
+
+- name: CREATE vNIC Management
+  delegate_to: localhost
+  azure_rm_networkinterface:
+    resource_group: "rg-{{ extra_platform_name }}"
+    name: "nic-{{ extra_platform_name }}-{{ item.value.vm_name }}-management"
+    location: "{{ extra_location }}"
+    virtual_network: "vnet-{{ extra_platform_name }}"
+    subnet_name: "net-{{ extra_platform_name }}-management"
+    create_with_security_group: false
+    security_group: "nsg-{{ extra_platform_name }}-consul"
+    tags: "{{ extra_platform_tags }}
+    Name=nic-{{ extra_platform_name }}-{{ item.value.ip_mgt }}-management"
+    ip_configurations:
+      - name: mgt
+        private_ip_address: "{{ item.value.ip_mgt }}"
+        private_ip_allocation_method: 'Static'
+        primary: true
+  loop: "{{ lookup('dict', extra_consul_cluster.members) }}"
+
+- name: CREATE VM
+  delegate_to: localhost
+  azure_rm_virtualmachine:
+    resource_group: "rg-{{ extra_platform_name }}"
+    name: "{{ item.value.vm_name }}"
+    location: "{{ extra_location }}"
+    short_hostname: "{{ item.value.vm_name }}"
+    vm_size: "{{ extra_vm_size }}"
+    os_disk_size_gb: 128
+    tags: "{{ extra_platform_tags }}
+              Name={{ item.value.vm_name }}"
+    admin_username: "{{ infra_admin_username }}"
+    ssh_password_enabled: false
+    ssh_public_keys:
+      - path: "/home/{{ infra_admin_username }}/.ssh/authorized_keys"
+        key_data: "{{ extra_key_data }}"
+    image:
+      offer: "CentOS"
+      publisher: "OpenLogic"
+      sku: "7_8-gen2"
+      version: "latest"
+    managed_disk_type: Premium_LRS
+    os_type: Linux
+    network_interface_names:
+      - "nic-{{ extra_platform_name }}-{{ item.value.vm_name }}-management"
+    zones: '{{ item.value.az }}'
+  loop: "{{ lookup('dict', extra_consul_cluster.members) }}"
+
+...

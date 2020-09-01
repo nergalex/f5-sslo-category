@@ -1,0 +1,31 @@
+---
+# https://learn.hashicorp.com/tutorials/consul/deployment-guide
+- name: Download and extract Consul
+  unarchive:
+    src: "https://releases.hashicorp.com/consul/{{ extra_consul_cluster.version }}/consul_{{ extra_consul_cluster.version }}_linux_amd64.zip"
+    dest: /usr/bin/
+    remote_src: yes
+    mode: '0755'
+    owner: root
+
+- name: CREATE a unique, non-privileged system user to run Consul
+  user:
+    name: consul
+    system: true
+    create_home: true
+    home: /etc/consul.d
+    shell: /bin/false
+
+- name: CREATE data directory for Consul user
+  file:
+    path: /opt/consul
+    state: directory
+    mode: '0755'
+    owner: consul
+    group: consul
+
+- name: COPY consul.service
+  copy:
+    content: "{{ lookup('template', 'consul_service.conf') }}"
+    dest: /etc/systemd/system/consul.service
+...

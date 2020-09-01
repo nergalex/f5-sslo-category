@@ -1,0 +1,33 @@
+{
+  {%- for key, value in var_box_current.json.iteritems() -%}
+    {%- if key != "rules" -%}
+      {{ key | tojson }}: {{ value | tojson }}
+    {%- else -%}
+      "rules": [
+      {% for rule in value %}
+        {%- if rule.caption != 'User Group and Category Matched' -%}
+          {{ rule | tojson }}
+        {%- else -%}
+          {
+          {%- for rule_key, rule_value in rule.iteritems() -%}
+            {%- if rule_key != 'expression' -%}
+              {{ rule_key | tojson }}: {{ rule_value | tojson }}
+            {%- else -%}
+              "expression": "expr {
+              {%- for subscription in var_subscriptions -%}
+                ( [mcget {session.custom.user_group}] contains \\\"{{ subscription.service_account }}\\\" && [class match [mcget {perflow.category_lookup.result.url}] equals dg_sslo_cat_{{ subscription.name }}] == 1 )
+              {%- if not loop.last -%} || {%- endif -%}
+              {%- endfor -%}
+              }"
+            {% endif %}
+            {%- if not loop.last -%},{% endif %}
+          {%- endfor -%}
+          }
+        {%- endif -%}
+        {%- if not loop.last -%},{% endif %}
+      {%- endfor -%}
+      ]
+    {%- endif -%}
+    {%- if not loop.last -%},{% endif %}
+  {%- endfor -%}
+}
