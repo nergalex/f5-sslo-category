@@ -1,16 +1,25 @@
+Summary
+======
 # Use Case
-* [F5 BIG-IP SSL Orchestrator](https://www.f5.com/products/security/ssl-orchestrator) can use a [Security Policy](https://techdocs.f5.com/en-us/bigip-15-1-0/big-ip-access-policy-manager-visual-policy-editor/per-request-policy-item-reference/about-per-request-classification-items/about-category-lookup.html) based on [Custom URL Categories](https://techdocs.f5.com/en-us/bigip-15-1-0/big-ip-access-policy-manager-implementations/custom-url-categorization.html).
-* Current URL lists of Custom URL Categories are stored in a Highly Available "Source of Truth" system.
-* This "Source of Truth" can be used by a Ticketing system or a Cloud Management Platform to retrieve current URL list of a custom URL category, displayed to end-users before requesting a change.
-* To be more reliable and faster in your Service Request deployment, changes on a Custom URL Category can be automated.
-* If a business impact occurs after a deployment, an automated rollback action can be raised to deploy the previous URL list of a Custom URL Category.
+* __Web Proxy__: Protect consumption of URLs from Application servers by using a Web Proxy [F5 BIG-IP SSL Orchestrator](https://www.f5.com/products/security/ssl-orchestrator)
+* __Authentication__: SSLO acts as an explicit Proxy to authenticate servers by using a service account. Application's service account is verified by SSLO from an AAA server (local DB, LDAP server, Azure ADFS...) and its belonging server's group is also retrieved
+* __Authorization__: SSLO allows a list of URLs per server group, based on the service account used to connect
+* __Automation__: automate changes on SSLO via BIG-IP API
+1. _Create a subscription_: Authorize a new server group to access to Internet limited to a default allowed URL list
+2. _Update >> Add allow URL_: Authorize an existing server group to access to new URLs
+3. _Update >> Remove allow URL_: Remove allowed URLs for an existing server group
+4. _Delete a subscription_: Remove an authorized server group to access to Internet
+* __Source of Truth__: INPUT form issued from changes are stored in an Highly Available "Source of Truth" system.
 
-# How does it work?
-* A custom URL category is updated by API calls on a F5 BIG-IP device with [Ansible](https://docs.ansible.com/ansible/latest/modules/uri_module.html).
-* Before apply a change on a BIG-IP device, current custom URL category value (URLs list) is saved in a remote system [Consul](https://www.consul.io/api/kv.html) as a backup configuration.
-* After apply a change on a BIG-IP device, current custom URL category value is saved in Consul system as a "Source of Truth".
-* Current URL list value of a custom URL category can be requested through Consul by any source, if an ACL allows it.
-* A rollback for a custom URL category is done using the backup custom URL category value stored in Consul.
+# Benefit
+* __Resiliency__: Miminal data (subscription's service account, URL allowed list) are stored in a Highly Available "Source of Truth" system through a multi-region/multi-cloud environment.
+* __Time to market__: To be more reliable and faster in your Service Request deployment, changes on a Custom URL Category can be automated.
+* __Reliable__: "Source of Truth" (Control Plane) can be used by a Ticketing system or a Cloud Management Platform to retrieve current configuration, displayed to end-users before requesting a change, in spite of impacting Data Plane devices.
+
+# Eco-system
+* [SSLO Security Policy](https://techdocs.f5.com/en-us/bigip-15-1-0/big-ip-access-policy-manager-visual-policy-editor/per-request-policy-item-reference/about-per-request-classification-items/about-category-lookup.html) based on [Custom URL Categories](https://techdocs.f5.com/en-us/bigip-15-1-0/big-ip-access-policy-manager-implementations/custom-url-categorization.html) or [data-group](https://techdocs.f5.com/kb/en-us/products/big-ip_ltm/manuals/product/bigip-system-irules-concepts-11-6-0/6.html).
+* [Ansible](https://docs.ansible.com/ansible/latest/modules/uri_module.html) is used to update Security Policy, custom URL category or data-group by API calls on F5 BIG-IP device.
+* [Consul](https://www.consul.io/api/kv.html) is used to store form INPUT or custom URL categories (URLs list) as a backup configuration.
 
 # Proof of Concept
 This configuration has been done for a POC, do not use it as-is in a Production environment. Use of custom URL category have performance impacts, technical recommendation bellow must be taken in consideration. 
@@ -35,7 +44,7 @@ $ chmod 755 -R /var/lib/awx/venv/my_env
 
 ## Consul
 Consul is used as a "Source of Truth" system.
-Choose your install guide: customized or quickly :o)
+Choose your install guide: customized or automated
 ### Customized
 Follow [Consul install guide](https://learn.hashicorp.com/consul/datacenter-deploy/deployment-guide#install-consul)
 
