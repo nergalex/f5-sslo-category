@@ -30,7 +30,7 @@ Install Guide
 ======
 # SSL Orchestrator
 
-<TODO>
+TODO
 
 # Ansible (Tower)
 Create a virtualenv, follow [Tower admin guide](https://docs.ansible.com/ansible-tower/latest/html/administration/tipsandtricks.html#preparing-a-new-custom-virtualenv).
