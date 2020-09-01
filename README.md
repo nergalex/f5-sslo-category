@@ -106,6 +106,7 @@ Other variables:
 
 | Extra variable    | Description   | Example of value |
 | -------------     | ------------- | ------------- |
+| `activity`                                | Refer to Job template above definition | `poc-azure_create-vm-consul` |
 | `extra_key_data`                          | admin CRT         | `-----BEGIN  CERTIFICATE-----XXXXXXX-----END CERTIFICATE-----` |
 | `extra_location`                          | region            | `eastus2` |
 | `extra_platform_name`                     | logical platform_name | `myPlatform` |
