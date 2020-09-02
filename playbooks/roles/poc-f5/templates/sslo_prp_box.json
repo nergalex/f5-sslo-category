@@ -5,7 +5,7 @@
     {%- else -%}
       "rules": [
       {% for rule in value %}
-        {%- if rule.caption != 'User Group and Category Matched' -%}
+        {%- if rule.caption != extra_sslo_branch_id -%}
           {{ rule | tojson }}
         {%- else -%}
           {

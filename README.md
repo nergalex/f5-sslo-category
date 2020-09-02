@@ -85,7 +85,8 @@ For local DB authentication
 
 ![alt text][sslo_prp_overview]
 
-* Rename the `empty box` "Category Branching" as desired
+* Rename the `empty box` "Category Branching" as desired, `User Group and Category Branching` for example.
+* Rename the `Pass` branch with a unique name, `User Group and Category Matched` for example. The playbook will look to this unique name in order to update the branch condition.
 
 ![alt text][sslo_prp_empty_box]
 
@@ -230,6 +231,7 @@ A survey is the change form, i.e. an INPUT form for extra variables requested to
 | `extra_consul_agent_ip`           | Consul agent "client" IP to use | `10.100.0.60` |
 | `extra_consul_agent_port`         | Consul agent "client" port to use | `8500` |
 | `extra_consul_datacenter`         | Consul DC to store key/value | `pop` |
+| `extra_sslo_branch_id     `       | Unique Branch ID to update | `User Group and Category Matched` |
 
 # URL Category playbooks
 ## Job Templates
