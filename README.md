@@ -29,9 +29,16 @@ This configuration has been done for a POC, do not use it as-is in a Production 
 Install Guide
 ======
 # SSL Orchestrator
+## Authentication policy
+### local DB
+For local DB authentication
+* Create a local DB
+![alt text][sslo_localdb_overview]
+
 ## Explicit Forward Proxy Topology
 * Create an Explicit Forward Proxy Topology as described in this [guide](https://clouddocs.f5.com/sslo-deployment-guide/chapter2/page2.4.html)
 ![alt text][sslo_config_overview]
+
 * Authenticate user using an LDAP server or local DB
 
 
@@ -39,6 +46,7 @@ Install Guide
 
 
 [sslo_config_overview]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_config_overview.png "sslo_config_overview"
+[sslo_localdb_overview]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_localdb_overview.png "sslo_localdb_overview"
 
 
 [sslo_ldap_azure_adds]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_ldap_azure_adds.png "sslo_ldap_azure_adds"
