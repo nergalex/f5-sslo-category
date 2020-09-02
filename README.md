@@ -33,26 +33,33 @@ Install Guide
 ### LDAP server
 For LDAP server, Azure ADDS authentication
 * Create and populate a `ldap server`
+
 ![alt text][sslo_ldap_azure_adds]
 
 * Create a `Per Session Policy`
+
 ![alt text][sslo_psp_auth_ldap_overwiew]
 
 * Add a `LDAP Auth` box
+
 ![alt text][sslo_psp_auth_ldap_box_ldap_auth]
 
 * Add a `LDAP Query` box
+
 ![alt text][sslo_psp_auth_ldap_box_ldap_query]
 
 ### local DB
 For local DB authentication
 * Create and populate a `local DB`
+
 ![alt text][sslo_localdb_overview]
 
 * Create a `Per Session Policy`
+
 ![alt text][sslo_psp_auth_localdb_overwiew]
 
 * Add a `Local Database` box
+
 ![alt text][sslo_psp_auth_localdb_box_user_group]
 
 
@@ -65,16 +72,20 @@ For local DB authentication
 ![alt text][sslo-config-interception_rule]
 
 * Create a Security Policy. Create a rule to intercept traffic - and forward it to a Security Service Chain as needed - for a specific category detected `Category Lookup (All)`. Another way is to use an existing Security Policy (Per Request Policy).
+
 ![alt text][sslo-config-security_rule]
 
 * If a Security policy was created previously, unlock it in order to modify the Per Request Policy object.
 * Edit the Per Request Policy object
+
 ![alt text][sslo_prp_overview]
 
 * Rename the `empty box` "Category Branching" as desired
+
 ![alt text][sslo_prp_empty_box]
 
 * Lookup for this `empty box` in BIG-IP REST UI
+
 ![alt text][sslo_prp_restui_locate]
 
 ![alt text][sslo_prp_restui_empty_box]
