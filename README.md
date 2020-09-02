@@ -30,16 +30,32 @@ Install Guide
 ======
 # SSL Orchestrator
 ## Authentication policy
+### LDAP server
+For LDAP server, Azure ADDS authentication
+* Create and populate a `ldap server`
+![alt text][sslo_ldap_azure_adds]
+* Create a `Per Session Policy`
+![alt text][sslo_psp_auth_ldap_overwiew]
+* Add a `LDAP Auth` box
+![alt text][sslo_psp_auth_ldap_box_ldap_auth]
+* Add a `LDAP Query` box
+![alt text][sslo_psp_auth_ldap_box_ldap_query]
+
 ### local DB
 For local DB authentication
-* Create a local DB
+* Create and populate a `local DB`
 ![alt text][sslo_localdb_overview]
+* Create a `Per Session Policy`
+![alt text][sslo_psp_auth_localdb_overwiew]
+* Add a `Local Database` box
+![alt text][sslo_psp_auth_localdb_box_user_group]
+
 
 ## Explicit Forward Proxy Topology
 * Create an Explicit Forward Proxy Topology as described in this [guide](https://clouddocs.f5.com/sslo-deployment-guide/chapter2/page2.4.html)
 ![alt text][sslo_config_overview]
-
 * Authenticate user using an LDAP server or local DB
+![alt text][sslo_psp_auth_localdb_box_user_group]
 
 
 
@@ -47,18 +63,18 @@ For local DB authentication
 
 [sslo_config_overview]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_config_overview.png "sslo_config_overview"
 [sslo_localdb_overview]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_localdb_overview.png "sslo_localdb_overview"
-
-
+[sslo_psp_auth_localdb_overwiew]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_psp_auth_localdb_overwiew.png "sslo_psp_auth_localdb_overwiew"
+[sslo_psp_auth_localdb_box_user_group]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_psp_auth_localdb_box_user_group.png "sslo_psp_auth_localdb_box_user_group"
 [sslo_ldap_azure_adds]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_ldap_azure_adds.png "sslo_ldap_azure_adds"
+[sslo_psp_auth_ldap_overwiew]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_psp_auth_ldap_overwiew.png "sslo_psp_auth_ldap_overwiew"
+[sslo_psp_auth_ldap_box_ldap_auth]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_psp_auth_ldap_box_ldap_auth.png "sslo_psp_auth_ldap_box_ldap_auth"
+[sslo_psp_auth_ldap_box_ldap_query]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_psp_auth_ldap_box_ldap_query.png "sslo_psp_auth_ldap_box_ldap_query"
+
+
 [sslo_prp_empty_box]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_prp_empty_box.png "sslo_prp_empty_box"
 [sslo_prp_overview]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_prp_overview.png "sslo_prp_overview"
 [sslo_prp_restui_empty_box]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_prp_restui_empty_box.png "sslo_prp_restui_empty_box"
 [sslo_prp_restui_locate]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_prp_restui_locate.png "sslo_prp_restui_locate"
-[sslo_psp_auth_ldap_box_ldap_auth]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_psp_auth_ldap_box_ldap_auth.png "sslo_psp_auth_ldap_box_ldap_auth"
-[sslo_psp_auth_ldap_box_ldap_query]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_psp_auth_ldap_box_ldap_query.png "sslo_psp_auth_ldap_box_ldap_query"
-[sslo_psp_auth_ldap_overwiew]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_psp_auth_ldap_overwiew.png "sslo_psp_auth_ldap_overwiew"
-[sslo_psp_auth_localdb_box_user_group]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_psp_auth_localdb_box_user_group.png "sslo_psp_auth_localdb_box_user_group"
-[sslo_psp_auth_localdb_overwiew]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_psp_auth_localdb_overwiew.png "sslo_psp_auth_localdb_overwiew"
 [sslo-config-interception_rule]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo-config-interception_rule.png "sslo-config-interception_rule"
 [sslo-config-security_rule]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo-config-security_rule.png "sslo-config-security_rule"
 
