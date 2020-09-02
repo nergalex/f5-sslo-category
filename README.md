@@ -11,7 +11,7 @@ Summary
 4. _Delete a subscription_: Remove an authorized server group to access to Internet
 * __Source of Truth__: INPUT form issued from changes are stored in an Highly Available "Source of Truth" system.
 
-![alt text][sslo_config_overview](https://youtu.be/fW9g4mvxNJc)
+[![demo](http://img.youtube.com/vi/fW9g4mvxNJc/0.jpg)](http://www.youtube.com/watch?v=fW9g4mvxNJc)
 
 # Benefit
 * __Resiliency__: Miminal data (subscription's service account, URL allowed list) are stored in a Highly Available "Source of Truth" system through a multi-region/multi-cloud environment.
@@ -49,6 +49,8 @@ For LDAP server, Azure ADDS authentication
 * Add a `LDAP Query` box
 
 ![alt text][sslo_psp_auth_ldap_box_ldap_query]
+
+* NOTE: if LDAP authentication is used, please replace `session.ldap.last.attr.memberOf` with `session.ldap.last.attr.memberOf` in `sslo_prp_box.json` template
 
 ### local DB
 For local DB authentication
