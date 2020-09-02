@@ -1,6 +1,6 @@
 Summary
 ======
-# Use Case
+## Use Case
 * __Web Proxy__: Protect consumption of URLs from Application servers by using a Web Proxy [F5 BIG-IP SSL Orchestrator](https://www.f5.com/products/security/ssl-orchestrator)
 * __Authentication__: SSLO acts as an explicit Proxy to authenticate servers by using a service account. Application's service account is verified by SSLO from an AAA server (local DB, LDAP server, Azure ADFS...) and its belonging server's group is also retrieved
 * __Authorization__: SSLO allows a list of URLs per server group, based on the service account used to connect
@@ -11,20 +11,20 @@ Summary
 4. _Delete a subscription_: Remove an authorized server group to access to Internet
 * __Source of Truth__: INPUT form issued from changes are stored in an Highly Available "Source of Truth" system.
 
-## Demo
+### Demo
 [![demo](http://img.youtube.com/vi/fW9g4mvxNJc/0.jpg)](http://www.youtube.com/watch?v=fW9g4mvxNJc)
 
-# Benefit
+## Benefit
 * __Resiliency__: Miminal data (subscription's service account, URL allowed list) are stored in a Highly Available "Source of Truth" system through a multi-region/multi-cloud environment.
 * __Time to market__: To be more reliable and faster in your Service Request deployment, changes on a Custom URL Category can be automated.
 * __Reliable__: "Source of Truth" (Control Plane) can be used by a Ticketing system or a Cloud Management Platform to retrieve current configuration, displayed to end-users before requesting a change, in spite of impacting Data Plane devices.
 
-# Eco-system
+## Eco-system
 * [SSLO Security Policy](https://techdocs.f5.com/en-us/bigip-15-1-0/big-ip-access-policy-manager-visual-policy-editor/per-request-policy-item-reference/about-per-request-classification-items/about-category-lookup.html) based on [Custom URL Categories](https://techdocs.f5.com/en-us/bigip-15-1-0/big-ip-access-policy-manager-implementations/custom-url-categorization.html) or [data-group](https://techdocs.f5.com/kb/en-us/products/big-ip_ltm/manuals/product/bigip-system-irules-concepts-11-6-0/6.html).
 * [Ansible](https://docs.ansible.com/ansible/latest/modules/uri_module.html) is used to update Security Policy, custom URL category or data-group by API calls on F5 BIG-IP device.
 * [Consul](https://www.consul.io/api/kv.html) is used to store form INPUT or custom URL categories (URLs list) as a backup configuration.
 
-# Proof of Concept
+## Proof of Concept
 This configuration was done for a POC, do not use it as-is in a Production environment, call F5 Professional Services to validate your design.
 
 Install Guide
