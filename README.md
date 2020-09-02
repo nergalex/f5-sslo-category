@@ -61,6 +61,7 @@ For local DB authentication
 ![alt text][sslo_config_overview]
 
 * Specify Authentication policy previously created
+
 ![alt text][sslo-config-interception_rule]
 
 * Create a Security Policy. Create a rule to intercept traffic - and forward it to a Security Service Chain as needed - for a specific category detected `Category Lookup (All)`. Another way is to use an existing Security Policy (Per Request Policy).
