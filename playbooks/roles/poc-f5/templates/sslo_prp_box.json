@@ -15,7 +15,7 @@
             {%- else -%}
               "expression": "expr {
               {%- for subscription in var_subscriptions -%}
-                ( [mcget {session.custom.user_group}] contains \\\"{{ subscription.service_account }}\\\" && [class match [mcget {perflow.category_lookup.result.url}] equals dg_sslo_cat_{{ subscription.name }}] == 1 )
+                ( [mcget {session.custom.user_group}] equals \\\"{{ subscription.service_account }}\\\" && [class match [mcget {perflow.category_lookup.result.url}] starts_with dg_sslo_cat_{{ subscription.name }}] == 1 )
               {%- if not loop.last -%} || {%- endif -%}
               {%- endfor -%}
               }"
