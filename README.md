@@ -25,9 +25,7 @@ Summary
 * [Consul](https://www.consul.io/api/kv.html) is used to store form INPUT or custom URL categories (URLs list) as a backup configuration.
 
 # Proof of Concept
-This configuration has been done for a POC, do not use it as-is in a Production environment. Use of custom URL category have performance impacts, technical recommendation bellow must be taken in consideration. 
-* `glob-match` URL type: Custom categories consume CPU just by existing, categories with `glob-match` patterns doubly so. Try to avoid `glob-match` categories if you can.
-* max URLs: if a custom URL category start to exceed 200 URLs, consider switching to a `data group` design
+This configuration was done for a POC, do not use it as-is in a Production environment, call F5 Professional Services to validate your design.
 
 Install Guide
 ======
@@ -234,6 +232,10 @@ A survey is the change form, i.e. an INPUT form for extra variables requested to
 | `extra_sslo_branch_id     `       | Unique Branch ID to update | `User Group and Category Matched` |
 
 # URL Category playbooks
+Use of _custom URL category_ have performance impacts, technical recommendation bellow must be taken in consideration. 
+* `glob-match` URL type: Custom categories consume CPU just by existing, categories with `glob-match` patterns doubly so. Try to avoid `glob-match` categories if you can.
+* max URLs: if a custom URL category start to exceed 200 URLs, consider switching to a `data group` design
+
 ## Job Templates
 Create and launch a job template that include each of those playbooks:
 
