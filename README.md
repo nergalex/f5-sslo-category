@@ -11,6 +11,8 @@ Summary
 4. _Delete a subscription_: Remove an authorized server group to access to Internet
 * __Source of Truth__: INPUT form issued from changes are stored in an Highly Available "Source of Truth" system.
 
+![alt text][sslo_config_overview](https://youtu.be/fW9g4mvxNJc)
+
 # Benefit
 * __Resiliency__: Miminal data (subscription's service account, URL allowed list) are stored in a Highly Available "Source of Truth" system through a multi-region/multi-cloud environment.
 * __Time to market__: To be more reliable and faster in your Service Request deployment, changes on a Custom URL Category can be automated.
