@@ -50,16 +50,21 @@ For local DB authentication
 * Add a `Local Database` box
 ![alt text][sslo_psp_auth_localdb_box_user_group]
 
-
 ## Explicit Forward Proxy Topology
 * Create an Explicit Forward Proxy Topology as described in this [guide](https://clouddocs.f5.com/sslo-deployment-guide/chapter2/page2.4.html)
 ![alt text][sslo_config_overview]
-* Authenticate user using an LDAP server or local DB
-![alt text][sslo_psp_auth_localdb_box_user_group]
-
-
-
-
+* Specify Authentication policy previously created
+![alt text][sslo-config-interception_rule]
+* Create a Security Policy. Create a rule to intercept traffic - and forward it to a Security Service Chain as needed - for a specific category detected `Category Lookup (All)`. Another way is to use an existing Security Policy (Per Request Policy).
+![alt text][sslo-config-security_rule]
+* If a Security policy was created previously, unlock it in order to modify the Per Request Policy object.
+* Edit the Per Request Policy object
+![alt text][sslo_prp_overview]
+* Rename the `empty box` "Category Branching" as desired
+![alt text][sslo_prp_empty_box]
+* Lookup for this `empty box` in BIG-IP REST UI
+![alt text][sslo_prp_restui_locate]
+![alt text][sslo_prp_restui_empty_box]
 
 [sslo_config_overview]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_config_overview.png "sslo_config_overview"
 [sslo_localdb_overview]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_localdb_overview.png "sslo_localdb_overview"
@@ -69,14 +74,12 @@ For local DB authentication
 [sslo_psp_auth_ldap_overwiew]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_psp_auth_ldap_overwiew.png "sslo_psp_auth_ldap_overwiew"
 [sslo_psp_auth_ldap_box_ldap_auth]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_psp_auth_ldap_box_ldap_auth.png "sslo_psp_auth_ldap_box_ldap_auth"
 [sslo_psp_auth_ldap_box_ldap_query]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_psp_auth_ldap_box_ldap_query.png "sslo_psp_auth_ldap_box_ldap_query"
-
-
-[sslo_prp_empty_box]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_prp_empty_box.png "sslo_prp_empty_box"
-[sslo_prp_overview]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_prp_overview.png "sslo_prp_overview"
-[sslo_prp_restui_empty_box]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_prp_restui_empty_box.png "sslo_prp_restui_empty_box"
-[sslo_prp_restui_locate]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_prp_restui_locate.png "sslo_prp_restui_locate"
 [sslo-config-interception_rule]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo-config-interception_rule.png "sslo-config-interception_rule"
 [sslo-config-security_rule]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo-config-security_rule.png "sslo-config-security_rule"
+[sslo_prp_overview]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_prp_overview.png "sslo_prp_overview"
+[sslo_prp_empty_box]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_prp_empty_box.png "sslo_prp_empty_box"
+[sslo_prp_restui_locate]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_prp_restui_locate.png "sslo_prp_restui_locate"
+[sslo_prp_restui_empty_box]: https://github.com/nergalex/f5-sslo-category/blob/master/image/sslo_prp_restui_empty_box.png "sslo_prp_restui_empty_box"
 
 
 # Ansible (Tower)
