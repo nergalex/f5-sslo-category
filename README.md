@@ -29,8 +29,22 @@ This configuration has been done for a POC, do not use it as-is in a Production 
 Install Guide
 ======
 # SSL Orchestrator
+## Explicit Forward Proxy Topology
+* Create an Explicit Forward Proxy Topology as described in this [guide](https://clouddocs.f5.com/sslo-deployment-guide/chapter2/page2.4.html)
+* Authenticate user using an LDAP server or local DB
 
-TODO
+![alt text][logo]
+
+
+
+
+
+[sslo_ldap_azure_adds]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "sslo_ldap_azure_adds"
+[sslo_prp_empty_box]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "sslo_prp_empty_box"
+[sslo_prp_overview]: https://github.com/nergalex/f5-sslo-category/image/sslo_prp_overview.png "sslo_prp_overview"
+[sslo_ldap_azure_adds]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 2"
+[sslo_ldap_azure_adds]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 2"
+
 
 # Ansible (Tower)
 Create a virtualenv, follow [Tower admin guide](https://docs.ansible.com/ansible-tower/latest/html/administration/tipsandtricks.html#preparing-a-new-custom-virtualenv).
