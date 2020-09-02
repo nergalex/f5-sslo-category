@@ -84,7 +84,7 @@ For local DB authentication
 
 ![alt text][sslo_prp_empty_box]
 
-* Lookup for this `empty box` in BIG-IP REST UI
+* Lookup for this `empty box` in BIG-IP REST UI `https://myhostname/mgmt/toc`
 
 ![alt text][sslo_prp_restui_locate]
 
