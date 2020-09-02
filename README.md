@@ -11,6 +11,7 @@ Summary
 4. _Delete a subscription_: Remove an authorized server group to access to Internet
 * __Source of Truth__: INPUT form issued from changes are stored in an Highly Available "Source of Truth" system.
 
+## Demo
 [![demo](http://img.youtube.com/vi/fW9g4mvxNJc/0.jpg)](http://www.youtube.com/watch?v=fW9g4mvxNJc)
 
 # Benefit
