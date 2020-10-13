@@ -126,73 +126,7 @@ $ chmod 755 -R /var/lib/awx/venv/my_env
 ```
 
 # Consul
-Choose your install guide: customized from [Consul install guide](https://learn.hashicorp.com/consul/datacenter-deploy/deployment-guide#install-consul) or automated (below) with Ansible
-
-## Credential 
-Create custom credential `cred_Consul` to manage access to Consul VMs
-
-| CREDENTIAL TYPE | USERNAME      | SSH PRIVATE KEY     | SIGNED SSH CERTIFICATE         | PRIVILEGE ESCALATION METHOD    |
-| ------------- | ------------- | ------------- | ------------- | ------------- |
-| `Machine` | `my_VM_admin_user` | `my_VM_admin_user_key` | `my_VM_admin_user_CRT` | `sudo` |
-
-## Workflow and Job Templates
-Create a worflow template `wf-create_create_cluster_consul` that includes each of those job template:
-
-| Job template  | playbook      | activity      | inventory     | limit         | credential   |
-| ------------- | ------------- | ------------- | ------------- | ------------- |------------- |
-| `poc-azure_create-vm-consul`  | `playbooks/poc-azure.yaml`        | `create-vm-consul`    | `localhost`   | none | `your_azure_account` |
-| `poc-consul_install`          | `playbooks/poc-consul.yaml`       | `install`             | `localhost`   | none | `cred_Consul` |
-| `poc-consul_keygen`           | `playbooks/poc-consul_master.yaml`| `keygen`              | `localhost`   | none | `cred_Consul` |
-| `poc-consul_onboard`          | `playbooks/poc-consul.yaml`       | `onboard`             | `localhost`   | none | `cred_Consul` |
-
-## Extra variables
-A dict contains Consul cluster configuration as desired
-```yaml
-extra_consul_cluster:
-  members:
-    <logical_name>:
-      az: <AZ list>
-      ip_mgt: <management IP>
-      master: [true | false]
-      role: [client | server]
-      vm_name: <VM_name>
-  version: <Consul version to download>
-  vm_master_ip_mgt: <management IP of the master Consul VM>
-```
-Example:
-```yaml
-extra_consul_cluster:
-  members:
-    server-1:
-      az:
-        - 1
-      ip_mgt: 10.100.0.60
-      master: true
-      role: server
-      vm_name: consul-server-1
-    server-2:
-      az:
-        - 2
-      ip_mgt: 10.100.0.61
-      master: false
-      role: server
-      vm_name: consul-server-2
-  version: 1.8.3
-  vm_master_ip_mgt: 10.100.0.60
-```
-Other variables:
-
-| Extra variable    | Description   | Example of value |
-| -------------     | ------------- | ------------- |
-| `activity`                                | Refer to Job template above definition | `poc-azure_create-vm-consul` |
-| `extra_key_data`                          | admin CRT         | `-----BEGIN  CERTIFICATE-----XXXXXXX-----END CERTIFICATE-----` |
-| `extra_location`                          | region            | `eastus2` |
-| `extra_platform_name`                     | logical platform_name | `myPlatform` |
-| `extra_platform_tags`                     | logical platform_tags | `environment=DMO platform=Inbound project=CloudBuilderf5` |
-| `extra_subnet_mgt_on_premise`             | Tower subnet      | `10.0.0.0/24` |
-| `extra_vm_size`                           | VM type           | `Standard_DS1_v2` |
-| `infra_admin_username`                    | Admin username    | `plop` |
-| `extra_subnet_mgt_dataplane`              | Consul subnet     | `10.100.0.0/24` |
+[Install guide](https://github.com/nergalex/f5-consul-service_discovery)
 
 # data-group playbooks
 ## Job Templates
