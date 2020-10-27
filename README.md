@@ -49,8 +49,6 @@ For LDAP server, Azure ADDS authentication
 
 ![alt text][sslo_psp_auth_ldap_box_ldap_query]
 
-* NOTE: if LDAP authentication is used, please replace `session.ldap.last.attr.memberOf` with `session.ldap.last.attr.memberOf` in `sslo_prp_box.json` template
-
 ### local DB
 For local DB authentication
 * Create and populate a `local DB`
@@ -85,6 +83,7 @@ For local DB authentication
 
 * Rename the `empty box` "Category Branching" as desired, `User Group and Category Branching` for example.
 * Rename the `Pass` branch with a unique name, `User Group and Category Matched` for example. The playbook will look to this unique name in order to update the branch condition.
+* NOTE: if LDAP authentication is used, please replace `session.custom.user_group` with `session.ldap.last.attr.memberOf` in `sslo_prp_box.json` template
 
 ![alt text][sslo_prp_empty_box]
 
